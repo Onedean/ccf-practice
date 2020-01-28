@@ -20,8 +20,23 @@
 评测用例规模与约定
 　　对于所有评测用例，1 ≤ n ≤ 1000，1 ≤ k ≤ 10000，1 ≤ ai ≤ 1000。
  */
-#include<iostream>
+#include <iostream>
 using namespace std;
-int main(){
-    
+int main()
+{
+    int n, k, sum = 0, total = 0, a[1005];
+    cin >> n >> k;
+    for (int i = 0; i < n; i++)
+        cin >> a[i];
+    for (int i = 0; i < n; i++)
+    {
+        sum += a[i];
+        if (sum >= k || i == n - 1)
+        {
+            sum = 0;
+            total++;
+        }
+    }
+    cout << total;
+    return 0;
 }
