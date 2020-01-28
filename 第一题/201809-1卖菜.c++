@@ -20,8 +20,22 @@
 数据规模和约定
 　　对于所有评测用例，2 ≤ n ≤ 1000，第一天每个商店的菜价为不超过10000的正整数。
  */
-#include<iostream>
+#include <iostream>
 using namespace std;
-int main(){
-    
+int main()
+{
+    int n, a[1005];
+    cin >> n;
+    for (int i = 0; i < n; i++)
+        cin >> a[i];
+    for (int i = 0; i < n; i++)
+    {
+        if (i == 0)
+            cout << (a[i] + a[i + 1]) / 2 << ' ';
+        else if (i == n - 1)
+            cout << (a[n - 1] + a[n - 2]) / 2;
+        else
+            cout << (a[i - 1] + a[i] + a[i + 1]) / 3 << ' ';
+    }
+    return 0;
 }
