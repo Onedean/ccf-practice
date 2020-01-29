@@ -6,7 +6,7 @@
 输出：四个数（分四行），即甲乙丙丁四人各自跳过的次数
  */
 #include <iostream>
-#include <cstring>
+#include <string>
 using namespace std;
 int main()
 {
