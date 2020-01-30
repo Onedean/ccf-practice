@@ -37,3 +37,41 @@ IGNORED
 　　第三次点击的位置同时属于三个窗口的范围,但是由于现在第 1 个窗口处于顶层,它被选择。
 　　最后点击的 (0, 5) 不属于任何窗口。
  */
+#include <iostream>
+#include <algorithm>
+using namespace std;
+struct chuangkou
+{
+    int x1, y1, x2, y2;
+    int level;
+} frame[11];
+int main()
+{
+    int n, m, x, y, i, j;
+    cin >> n >> m;
+    for (i = 1; i <= n; i++)
+    {
+        cin >> frame[i].x1 >> frame[i].y1 >> frame[i].x2 >> frame[i].y2;
+        frame[i].level = i;
+    }
+    for (i = 0; i < m; i++)
+    {
+        cin >> x >> y;
+        for (j = n; j >= 1; j--)
+        {
+            if (x >= frame[j].x1 && y >= frame[j].y1 && x <= frame[j].x2 && y <= frame[j].y2)
+            {
+                cout << frame[j].level << endl;
+                swap(frame[n].x1, frame[j].x1);
+                swap(frame[n].y1, frame[j].y1);
+                swap(frame[n].x2, frame[j].x2);
+                swap(frame[n].y2, frame[j].y2);
+                swap(frame[n].level, frame[j].level);
+                break;
+            }
+        }
+        if (!j)
+            cout << "IGNORED" << endl;
+    }
+    return 0;
+}
