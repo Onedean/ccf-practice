@@ -12,6 +12,8 @@
 样例输入
 2015
 80
+样例输出
+3
 21
 样例输入
 2000
@@ -20,8 +22,23 @@
 2
 9
  */
-#include<iostream>
+#include <iostream>
 using namespace std;
-int main(){
-    
+int main()
+{
+    int year, num, data[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    cin >> year >> num;
+    if (!(year % 4) && year % 100 || !(year % 400))
+        data[1] = 29;
+    for (int i = 0; i < 12; i++)
+    {
+        if (num <= data[i])
+        {
+            cout << i + 1 << endl
+                 << num;
+            break;
+        }
+        num -= data[i];
+    }
+    return 0;
 }
