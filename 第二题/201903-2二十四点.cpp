@@ -24,16 +24,16 @@
 6x7-3x6
 6x4+4/5
 【样例1输出】
-    Yes
-    No
-    No
-    Yes
-    Yes
-    No
-    No
-    No
-    Yes
-    Yes
+Yes
+No
+No
+Yes
+Yes
+No
+No
+No
+Yes
+Yes
 样例1解释
     9 + 3 + 4 × 3 = 24
     5 + 4 × 5 × 5 = 105
@@ -79,7 +79,7 @@ int main()
                     num.push('0' - str[i + 1]);
                     i++;
                 }
-                else if (str[i] == '*')
+                else if (str[i] == 'x')
                 {
                     int pre = num.top();
                     num.pop();
@@ -105,7 +105,6 @@ int main()
             op.pop();
             num.push(a + b);
         }
-        cout << num.top() << endl;
         if (num.top() == 24)
             cout << "Yes" << endl;
         else
