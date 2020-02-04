@@ -57,3 +57,44 @@
 1 1 1 1 1 1 1 1 1 1
 0 0 0 0 1 1 0 0 0 0
  */
+/* 
+思路:
+1、掉落的记为方块，给定的大图记为城堡
+2、让方块每次从给定的列往下下落一行进行判断：
+        若出现方块中有任意一实体块（1）与城堡实体块（1）碰撞（即相等），
+    或者方块最下面一行实体块碰到了城堡最底部下一行（技巧：补齐为1），
+    则该次下落的前一次下落即为最终结果，将方块补齐到城堡中输出即可。
+ */
+#include <iostream>
+using namespace std;
+int main()
+{
+    int a[16][10], b[4][4], k, fall = 0;
+    for (int i = 0; i < 150; i++)
+        cin >> a[i / 10][i % 10];
+    for (int j = 0; j < 10; j++)
+        a[15][j] = 1;
+    for (int i = 0; i < 16; i++)
+        cin >> b[i / 4][i % 4];
+    cin >> k;
+    while (1)
+    {
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+                if (b[i][j] & a[fall + i][k - 1 + j])
+                    goto out;
+        fall++;
+    }
+out:
+    fall--;
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            a[fall + i][k - 1 + j] |= b[i][j];
+    for (int i = 0; i < 15; i++)
+    {
+        for (int j = 0; j < 10; j++)
+            cout << a[i][j] << ' ';
+        cout << endl;
+    }
+    return 0;
+}
