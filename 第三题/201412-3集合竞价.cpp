@@ -76,7 +76,7 @@ int main()
     int n = 0, index;
     float maxPrice = 0; // 成交价格
     set<float> price;
-    long long buyNum, sellNum, dellNum, maxNum = -1;
+    long long buyNum, sellNum, dellNum, maxNum = 0;
     while (cin >> order[n++].op)
     {
         if (order[n - 1].op == "cancel")
@@ -88,7 +88,7 @@ int main()
         cin >> order[n - 1].price >> order[n - 1].num;
     }
     for (int i = 0; i < n; i++) // 用到set<double>容器，它的insert方法会自动根据值得从小到大排列
-        if (order[i].op != "cancel" && order[i].isCannel)
+        if (order[i].op == "buy" && order[i].isCannel)
             price.insert(order[i].price);
     for (set<float>::iterator it = price.begin(); it != price.end(); it++)
     {
@@ -101,10 +101,10 @@ int main()
                 sellNum += order[i].num;
         }
         dellNum = min(buyNum, sellNum);
-        if (dellNum > maxNum)
+        if (dellNum >= maxNum)
         {
             maxNum = dellNum;
-            maxPrice = *it;
+            maxPrice = max(maxPrice, *it);
         }
     }
     printf("%.2f %lld", maxPrice, maxNum);
