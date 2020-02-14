@@ -29,3 +29,33 @@ HELLOisNOTHello
 评测用例规模与约定
 　　1<=n<=100，每个字符串的长度不超过100。
  */
+/* 
+在程序的头文件中包含algorithm，进行转换的时候，直接使用transform函数
+注意transform有四个输入参数
+1：str.begin()字符串的起始地址；
+2：str.end()字符串的终止地址；
+3：str.begin()是转换之后，输出到原str字符串的起始地址；
+4：转换操作，可以选择toupper，tolower
+ */
+#include <iostream>
+#include <string>
+#include <algorithm>
+using namespace std;
+int main()
+{
+    string str, word, saveWord;
+    int flag, n;
+    cin >> str >> flag >> n;
+    if (!flag)
+        transform(str.begin(), str.end(), str.begin(), ::tolower);
+    for (int i = 0; i < n; i++)
+    {
+        cin >> word;
+        saveWord = word;
+        if (!flag)
+            transform(word.begin(), word.end(), word.begin(), ::tolower);
+        if (word.find(str) != -1)
+            cout << saveWord << endl;
+    }
+    return 0;
+}

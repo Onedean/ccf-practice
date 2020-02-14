@@ -36,31 +36,61 @@ Case 2:
 Case 3: -w 15 -x
 Case 4: -a -b
  */
+/* 
+注：按照测试意思（题目测试数据太坑），不能用-作为切分，
+    比如-a documents实际上并不是看做一个命令a及其命令参数documents
+    而是看做命令-a和错误命令documents两个命令
+ */
 #include <iostream>
 #include <string>
+#include <map>
 using namespace std;
 int main()
 {
-    string command, str, newStr;
-    int n, hashTable[26] = {0};
+    string command, str, newStr, lastStr;
+    map<char, int> type;
+    map<char, string> param;
+    int n, p1, p2, flag;
     cin >> command;
-    for (int i = 0; i < command.length(); i++)
-    {
+    for (int i = 0; i < command.length(); i++) // 分割命令行，不带参数为1，带参数为2，map中找不到为0
         if (command[i] != ':' && command[i + 1] != ':')
-            hashTable[command[i] - 'a'] = 1;
+            type[command[i]] = 1; // 用array方式覆盖式插入
         else
-        {
-            hashTable[command[i] - 'a'] = 2;
-            i++;
-        }
-    }
+            type[command[i++]] = 2;
     cin >> n;
-    for (int i = 1; i <= n; i++)
+    getchar(); // 读取换行符
+    for (int i = 0; i < n; i++)
     {
-        cin >> str;
-        newStr="";
-
-        cout << "Case " << i << ": " << endl;
+        getline(cin, str);
+        param.clear(); // 每轮map清空开始下一轮勿忘
+        flag = 1;
+        while ((p1 = str.find(' ')) != -1)
+        {
+            str[p1] = 0; // 用\0替换掉当前查找到的空格，从而依次查找后一位空格
+            p2 = str.find(' ');
+            newStr = p2 != -1 ? str.substr(p1 + 1, p2 - p1 - 1) : str.substr(p1 + 1); // 取每个命令
+            if (flag)
+            {
+                if (newStr[0] != '-' || !type[newStr[1]])
+                    break;
+                if (type[newStr[1]] == 1)
+                    param[newStr[1]] = ""; // 记录不含参数命令的参数项为空
+                else
+                {
+                    lastStr = newStr; // 保存含参数命令的命令名
+                    flag = 0;
+                }
+            }
+            else
+            {
+                param[lastStr[1]] = ' ' + newStr; //  记录含参数命令的参选项
+                flag = 1;
+            }
+        }
+        cout << "Case " << i + 1 << ':';
+        for (map<char, string>::iterator it = param.begin(); it != param.end(); it++)
+            cout << " -" << it->first << it->second;
+        cout << endl;
     }
     return 0;
 }
