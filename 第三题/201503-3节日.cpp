@@ -26,7 +26,7 @@
 using namespace std;
 int leap(int year)
 {
-    return year % 400 || (!(year % 4) && year % 100);
+    return !(year % 400) || !(year % 4) && year % 100;
 }
 int main()
 {
@@ -37,20 +37,19 @@ int main()
     for (int i = y1; i <= y2; i++)
     {
         mon[1] = leap(i) ? 29 : 28;
-        for (int j = 0; i < a - 1; j++)
+        for (int j = 0; j < a - 1; j++)
             sum += mon[j];
-        /* week = (sum + 2) % 7 ? (sum + 2) % 7 : 7; //计算当年当月第一天是星期几
-        cout << week << endl;
+        week = (sum + 2) % 7 ? (sum + 2) % 7 : 7; //计算当年当月第一天是星期几
         tempDay = (b - 1) * 7;
         if (week <= c)
             tempDay += c - week + 1;
         else
             tempDay += 7 - (week - c) + 1;
-        if (tempDay <= mon[a])
+        if (tempDay <= mon[a - 1]) // 和下面一个for循环注意是a-1对应数组
             printf("%d/%02d/%02d\n", i, a, tempDay);
         else
-            cout << "none" << endl; */
-        for (int j = a; i < 12; j++)
+            cout << "none" << endl;
+        for (int j = a - 1; j < 12; j++)
             sum += mon[j];
     }
     return 0;
