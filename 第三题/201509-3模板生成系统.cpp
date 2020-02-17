@@ -72,7 +72,35 @@ email "david@beckham.com"
 　　保证输入的所有变量的名字各不相同。
  */
 #include <iostream>
+#include <string>
+#include <map>
 using namespace std;
 int main()
 {
+    int m, n, pre, pro;
+    string temp[100], name, value;
+    map<string, string> dict;
+    cin >> m >> n;
+    getchar();
+    for (int i = 0; i < m; i++)
+        getline(cin, temp[i]);
+    for (int i = 0; i < n; i++)
+    {
+        cin >> name;
+        getline(cin, value);
+        dict[name] = value.substr(2, value.size() - 3); //value会读空格,所以从第2位取,去掉 ""3个字符
+    }
+    for (int i = 0; i < m; i++)
+    {
+        pre = 0;                                       // 清零上次位置，防止下面不是从头找
+        while ((pre = temp[i].find("{{ ", pre)) != -1) // 查找" {{"并判断替换完成条件
+        {
+            pro = temp[i].find(" }}", pre);                                          //查找" }}"位置
+            name = temp[i].substr(pre + 3, pro - pre - 3);                           // 取出{{ xxx }}中的字符
+            temp[i].replace(pre, pro - pre + 3, dict.count(name) ? dict[name] : ""); //替换{{ xxx }}中字符xxx
+            pre += dict.count(name) ? dict[name].size() : 0;                         // 处理完此次置换后移查找位置
+        }
+        cout << temp[i] << endl;
+    }
+    return 0;
 }
