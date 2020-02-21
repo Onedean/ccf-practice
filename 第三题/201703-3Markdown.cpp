@@ -96,7 +96,11 @@ int main()
         if (vc[i][0] == '#')
         {
             char len = vc[i].find(' ') > 6 ? '6' : vc[i].find(' ') + '0';
-            vc[i] = "<h>" + vc[i].substr(vc[i].find_last_of(' ') + 1) + "</h>";
+            int j;
+            for (j = 1; j < vc[i].size(); j++) // 注意逻辑的运算顺序防止越界
+                if (vc[i][j - 1] == ' ' && vc[i][j] != ' ')
+                    break;
+            vc[i] = "<h>" + vc[i].substr(j) + "</h>";
             vc[i].insert(vc[i].begin() + 2, len);
             vc[i].insert(vc[i].end() - 1, len);
         }
@@ -108,7 +112,13 @@ int main()
             vc.insert(vc.begin() + j, "</ul>"); // 注意先插后面，在插前面
             vc.insert(vc.begin() + i, "<ul>");
             for (int k = i + 1; k <= j; k++) // 注意j相对于整体的变化
-                vc[k] = "<li>" + vc[k].substr(vc[k].find_last_of(' ') + 1) + "</li>";
+            {
+                int l;
+                for (l = 1; l < vc[k].size(); l++)
+                    if (vc[k][l - 1] == ' ' && vc[k][l] != ' ')
+                        break;
+                vc[k] = "<li>" + vc[k].substr(l) + "</li>";
+            }
             i = j + 1; // 注意此时长度改变
         }
         else
