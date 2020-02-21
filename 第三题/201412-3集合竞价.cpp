@@ -28,6 +28,8 @@ buy 100.00 50
 评测用例规模与约定
 　　对于100%的数据，输入的行数不超过5000。
  */
+
+
 /* 
    buy       价格轴  sell
  100.00(50)
@@ -61,6 +63,8 @@ buy 9.00 100
 如果后面的cancel作用在前面已经被cancel作用过的sell和buy上，则每次取反(即，两次cancel相抵消)
 2、注意数据10^8要用long long型
  */
+
+
 #include <iostream>
 #include <set>
 using namespace std;

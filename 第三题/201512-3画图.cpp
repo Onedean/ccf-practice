@@ -65,3 +65,69 @@ A--A
 　　所有的评测用例满足：2 ≤ m, n ≤ 100，0 ≤ q ≤ 100，0 ≤ x < m（x表示输入数据中所有位置的x坐标），
     0 ≤ y < n（y表示输入数据中所有位置的y坐标）。
  */
+#include <iostream>
+#include <cstring>
+using namespace std;
+char canv[105][105];
+int m, n, q, flag, mark[105][105];
+bool judge(int x, int y)
+{
+    if (x < 0 || x > n - 1 || y < 0 || y > m - 1)
+        return false;
+    else if (mark[x][y] == 1)
+        return false;
+    else if (canv[x][y] == '-' || canv[x][y] == '|' || canv[x][y] == '+')
+        return false;
+    else
+        return true;
+}
+void dfs(int x, int y, char c) // 深度优先搜索处理
+{
+    canv[x][y] = c;
+    mark[x][y] = 1;
+    if (judge(x - 1, y)) // 上
+        dfs(x - 1, y, c);
+    if (judge(x + 1, y)) // 下
+        dfs(x + 1, y, c);
+    if (judge(x, y - 1)) // 左
+        dfs(x, y - 1, c);
+    if (judge(x, y + 1)) // 右
+        dfs(x, y + 1, c);
+}
+int main()
+{
+    cin >> m >> n >> q;
+    memset(canv, '.', sizeof(canv));
+    for (int i = 0; i < q; i++)
+    {
+        cin >> flag;
+        if (flag)
+        {
+            int x, y;
+            char c;
+            cin >> x >> y >> c;
+            memset(mark, 0, sizeof(mark)); // 注意标记清理
+            dfs(n - 1 - y, x, c);          // 注意处理坐标
+        }
+        else
+        {
+            int x1, y1, x2, y2;
+            cin >> x1 >> y1 >> x2 >> y2;
+            y1 = n - 1 - y1; // 提前处理坐标系
+            y2 = n - 1 - y2;
+            if (x1 == x2) //若x系相等，则在y行x列画|
+                for (int j = min(y1, y2); j <= max(y1, y2); j++)
+                    canv[j][x1] = canv[j][x1] == '+' || canv[j][x1] == '-' ? '+' : '|';
+            else //若y系相等，则在y行x列画-
+                for (int j = min(x1, x2); j <= max(x1, x2); j++)
+                    canv[y1][j] = canv[y1][j] == '+' || canv[y1][j] == '|' ? '+' : '-';
+        }
+    }
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+            cout << canv[i][j];
+        cout << endl;
+    }
+    return 0;
+}

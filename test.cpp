@@ -1,103 +1,101 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <string>
+#include <vector>
+
 using namespace std;
-int m, n, q;
-char a[101][101];
-int mark[101][101];
 
-bool judge(int x, int y)
-{
-    if (x < 0 || y < 0 || x > m || y > n)
-    {
-        return false;
-    }
-    else if (mark[y][x] == 1)
-    {
-        return false;
-    }
-    else if (a[y][x] == '+' || a[y][x] == '|' || a[y][x] == '-')
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
-}
-
-void dfs(int x, int y, char c)
-{
-    a[y][x] = c;
-    mark[y][x] = 1;
-    if (judge(x, y + 1))
-    { //向下移动
-        dfs(x, y + 1, c);
-    }
-    if (judge(x + 1, y))
-    { //向右移动
-        dfs(x + 1, y, c);
-    }
-    if (judge(x, y - 1))
-    { //向上移动
-        dfs(x, y - 1, c);
-    }
-    if (judge(x - 1, y))
-    { //向左移动
-        dfs(x - 1, y, c);
-    }
-}
+vector<string> ans;
 
 int main()
 {
-    cin >> m >> n >> q;
-    memset(a, '.', sizeof(a));
-
-    for (int i = 0; i < q; i++)
+    //读入Markdown文本
+    string s;
+    while (getline(cin, s))
     {
-        int y, x1, y1;
-        cin >> y;
-        if (y == 0)
+        ans.push_back(s);
+    }
+    // 1.处理 强调
+    for (int i = 0, cnt = 0; i < ans.size(); i++)
+        for (int j = 0; j < ans[i].length(); j++)
+            if (ans[i][j] == '_')
+            {
+                cnt++;
+                s = (cnt % 2) ? ("<em>") : ("</em>");
+                ans[i].insert(j + 1, s);
+                ans[i].erase(j, 1);
+            }
+    // 2.处理 超链接
+    for (int i = 0; i < ans.size(); i++)
+        for (int j = 0; j < ans[i].length(); j++)
         {
-            int x2, y2;
-            cin >> x1 >> y1 >> x2 >> y2;
-            y1 = n - 1 - y1;
-            y2 = n - 1 - y2;
-            if (x1 == x2)
-            {
-                for (int j = min(y1, y2); j <= max(y1, y2); j++)
-                {
-                    /*
-                        之后忘记加 a[j][x1] == '+'这个条件，扣10分，蓝瘦，啊啊啊啊啊啊啊啊
-					*/
-                    a[j][x1] = a[j][x1] == '-' || a[j][x1] == '+' ? '+' : '|';
-                }
-            }
-            else
-            {
-                for (int j = min(x1, x2); j <= max(x1, x2); j++)
-                {
-                    a[y1][j] = a[y1][j] == '|' || a[y1][j] == '+' ? '+' : '-';
-                }
-            }
+            int pos1 = ans[i].find("[", j);
+            int pos2 = ans[i].find("]", j + 1);
+            int pos3 = ans[i].find(")", j + 3);
+            if (pos1 == string::npos || pos2 == string::npos || pos3 == string::npos)
+                break;
+            string text, link;
+            text = ans[i].substr(pos1 + 1, pos2 - pos1 - 1);
+            link = ans[i].substr(pos2 + 2, pos3 - pos2 - 2);
+            s = "<a href=\"" + link + "\">" + text + "</a>";
+            ans[i].erase(pos1, pos3 - pos1 + 1);
+            ans[i].insert(pos1, s);
         }
-        else if (y == 1)
+    // 3.
+    for (int i = 0; i < ans.size(); i++)
+    {
+        if (ans[i] == "")
+            continue;
+        if (ans[i][0] == '#')
+        { //处理标题
+            int cnt = 0, j;
+            while (ans[i][cnt++] == '#')
+                ;
+            //截取标题
+            cnt--;
+            for (j = 1; j < ans[i].length(); j++)
+                if (ans[i][j - 1] == ' ' && ans[i][j] != ' ')
+                    break;
+            ans[i] = ans[i].substr(j);
+            ans[i] = "<h>" + ans[i] + "</h>";
+            char c = cnt + '0';
+            ans[i].insert(2, 1, c);
+            int len = ans[i].length() - 1;
+            ans[i].insert(len, 1, c);
+        }
+        else if (ans[i][0] == '*')
+        { //处理列表
+            //列表第一行是i,找到最后一行
+            int j = i + 1;
+            for (; j < ans.size() && ans[j][0] == '*'; j++)
+                ;
+            j--;                                      //j是列表的最后一行
+            ans.insert(ans.begin() + j + 1, "</ul>"); //考虑到插入操作对迭代器的影响故从后往前插
+            ans.insert(ans.begin() + i, "<ul>");
+            //现在列表处于 i+1 和 j+1之间了
+            for (int k = i + 1; k <= j + 1; k++)
+            {
+                int pos;
+                for (pos = 1; pos < ans[k].length(); pos++)
+                    if (ans[k][pos - 1] = ' ' && ans[k][pos] != ' ')
+                        break;
+                ans[k] = ans[k].substr(pos);
+                ans[k] = "<li>" + ans[k] + "</li>";
+            }
+            i = j + 2;
+        }
+        else
         {
-            char c;
-            cin >> x1 >> y1 >> c;
-            /*
-				要命处，刚开始忘记每次初始化0了，结果只能拿50分
-			*/
-            memset(mark, 0, sizeof(mark));
-            dfs(x1, n - 1 - y1, c);
+            int pos = i + 1;
+            for (; pos < ans.size() && ans[pos] != "" && ans[pos][0] != '#' && ans[pos][0] != '*'; pos++)
+                ;
+            pos--;
+            ans[i] = "<p>" + ans[i];
+            ans[pos] += "</p>";
+            i = pos;
         }
     }
-
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < m; j++)
-        {
-            cout << a[i][j];
-        }
-        cout << endl;
-    }
+    for (int i = 0; i < ans.size(); i++)
+        if (ans[i] != "")
+            cout << ans[i] << endl;
     return 0;
 }
