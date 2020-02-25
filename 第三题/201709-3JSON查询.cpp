@@ -58,8 +58,65 @@ STRING "hello"
 　　50%的评测用例输入的对象只有 1 层结构，80%的评测用例输入的对象结构层数不超过 2 层。举例来说，{"a": "b"} 是
     一层结构的对象，{"a": {"b": "c"}} 是二层结构的对象，以此类推。
  */
+//正则+dfs处理
 #include <iostream>
+#include <map>
+#include <regex>
 using namespace std;
+map<string, string> mp;
+stringstream ss;
+bool dfs(string key) // 注意嵌套未知层数故用while判断条件则返回是bool型
+{
+    string str;
+    ss >> str;      //以空格分割流出到str
+    if (str == "}") // 结束递归条件
+        return false;
+    if (str != "{") // 如果该键对应是字符值
+    {
+        string value = str.substr(1, str.rfind('"') - 1); // 获取引号内内容
+        if (str.back() != ':')
+            mp[key] = value; // 是字符,直接存储
+        else
+            dfs(key == "" ? value : key + "." + value); // 是键,此时没进入对象内，单次递归调用判断接下来是对象还是字符
+    }
+    else // 如果该键对应是对象值，则递归调用
+    {
+        if (key != "")
+            mp[key] = "OBJECT";
+        while (dfs(key)) // 此时进入对象内，嵌套层数位置用while递归调用
+            ;
+    }
+    return true;
+}
 int main()
 {
+    int n, m;
+    string str, json;
+    cin >> n >> m;
+    getchar();
+    while (n--)
+    {
+        getline(cin, str);
+        json += str;
+    }
+    json = regex_replace(json, regex(" "), "");
+    json = regex_replace(json, regex("\\\\\""), "\"");   // 2和3步正则不可颠倒,注意这种情况\\"
+    json = regex_replace(json, regex("\\\\\\\\"), "\\"); // c++中\\表示\,正则regex()中\\a表示a(其中a为特殊字符如\或下面的{)
+    json = regex_replace(json, regex(","), ", ");
+    json = regex_replace(json, regex(":"), ": ");
+    json = regex_replace(json, regex("\\{"), " { "); // {不可直接匹配
+    json = regex_replace(json, regex("},?"), " } "); // 注意对象里}后,可能有或无
+    ss << json;                                      // 将json塞入ss流中
+    dfs("");                                         // 传入键名,假定整体对象键名用空字符串代替
+    while (m--)
+    {
+        cin >> str;
+        if (mp.find(str) == mp.end())
+            cout << "NOTEXIST" << endl;
+        else if (mp[str] == "OBJECT")
+            cout << "OBJECT" << endl;
+        else
+            cout << "STRING " << mp[str] << endl;
+    }
+    return 0;
 }
